@@ -90,6 +90,8 @@
 
 cmake_minimum_required(VERSION 3.9...3.22 FATAL_ERROR)
 
+include (CMakePackageConfigHelpers)
+
 # Some configure checks depend upon the deployment target. Clear checks when
 # the deployment target changes.
 if (APPLE)
@@ -111,7 +113,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # The project name is that of the specified namespace.
-project(${KWSYS_NAMESPACE})
+project(${KWSYS_NAMESPACE} VERSION 1.0.0)
 
 # Tell CMake how to follow dependencies of sources in this directory.
 set_property(DIRECTORY
@@ -847,6 +849,30 @@ if(KWSYS_C_SRCS OR KWSYS_CXX_SRCS)
   if(KWSYS_INSTALL_NAMELINK_RULE)
     install(TARGETS ${KWSYS_TARGET_INSTALL} ${KWSYS_INSTALL_NAMELINK_RULE})
   endif()
+
+  if(KWSYS_INSTALL_EXPORT_DIR)
+    if(KWSYS_INSTALL_EXPORT_NAME)
+      export(TARGETS ${KWSYS_INSTALL_EXPORT_NAME} FILE ${KWSYS_INSTALL_EXPORT_NAME}-targets.cmake)
+      # Make this CMake compatible
+      install(EXPORT ${KWSYS_INSTALL_EXPORT_NAME} FILE ${KWSYS_INSTALL_EXPORT_NAME}-targets.cmake DESTINATION ${KWSYS_INSTALL_EXPORT_DIR})
+      
+      write_basic_package_version_file(${KWSYS_TARGET_INSTALL}-version.cmake COMPATIBILITY SameMajorVersion)
+      configure_package_config_file(../config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/${KWSYS_TARGET_INSTALL}-config.cmake
+        INSTALL_DESTINATION ${KWSYS_INSTALL_EXPORT_DIR}
+      )
+    endif()
+    
+    install (FILES
+      #"${CMAKE_CURRENT_BINARY_DIR}/${KWSYS_TARGET_INSTALL}-targets.cmake"
+      "${CMAKE_CURRENT_BINARY_DIR}/${KWSYS_TARGET_INSTALL}-config.cmake"
+      "${CMAKE_CURRENT_BINARY_DIR}/${KWSYS_TARGET_INSTALL}-version.cmake"
+      DESTINATION ${KWSYS_INSTALL_EXPORT_DIR}
+    )
+    
+    
+
+  endif()
+
 endif()
 
 # Add a C-only library if requested.
