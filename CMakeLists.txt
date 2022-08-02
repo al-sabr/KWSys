@@ -26,10 +26,3 @@ endif()
 set(KWSYS_PROPERTIES_CXX MACOSX_RPATH ${_macosx_rpath} WINDOWS_EXPORT_ALL_SYMBOLS FALSE)
 
 add_subdirectory(kwsys)
-
-#mitkMacroEmptyExternalProject(mitkKWSys)
-#[[
-mitk_create_module(
-  FORCE_STATIC
-  NO_INIT
-)]]
